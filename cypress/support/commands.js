@@ -55,3 +55,11 @@ Cypress.Commands.overwrite('type', (originalFn, element, text, options = {}) => 
 
     return originalFn(element, text, options);
 });
+
+Cypress.Commands.add('createExpense', (expenseData) => {
+    return cy.request({
+        method: 'POST',
+        url: '/api/expenses',
+        body: expenseData
+    });
+});

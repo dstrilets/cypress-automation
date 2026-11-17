@@ -1,8 +1,15 @@
 class FuelExpensesPage {
     openAddExpenseModal() {
+        cy.get('ngb-modal-window')
+            .should('not.exist');
+
         cy.contains('button', 'Add fuel expense')
             .first()
+            .should('be.visible')
             .click();
+
+        cy.get('ngb-modal-window')
+            .should('be.visible');
     }
 
     addExpense(mileage, liters, totalCost) {
@@ -10,10 +17,14 @@ class FuelExpensesPage {
             cy.get('select')
                 .first()
                 .find('option')
-                .filter((index, option) => option.textContent.trim() === 'Audi TT')
+                .filter((index, option) =>
+                    option.textContent.trim() === 'Audi TT'
+                )
                 .first()
                 .then(($option) => {
-                    cy.get('select').first().select($option.val());
+                    cy.get('select')
+                        .first()
+                        .select($option.val());
                 });
 
             cy.get('#addExpenseMileage')
@@ -28,8 +39,13 @@ class FuelExpensesPage {
                 .clear()
                 .type(String(totalCost));
 
-            cy.contains('button', 'Add').click();
+            cy.contains('button', 'Add')
+                .should('be.enabled')
+                .click();
         });
+
+        cy.get('ngb-modal-window', { timeout: 10000 })
+            .should('not.exist');
     }
 }
 
