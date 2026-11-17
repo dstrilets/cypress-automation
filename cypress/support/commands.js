@@ -25,17 +25,22 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 
+/// <reference types="cypress" />
+
 Cypress.Commands.add('login', (email, password) => {
+    cy.contains('button', 'Sign In').click();
+
+    cy.get('#signinEmail').should('be.visible').type(email);
+
+    cy.get('#signinPassword')
+        .should('be.visible')
+        .type(password, { sensitive: true });
+
     cy.contains('button', 'Login').click();
 
-    cy.get('#signinEmail').type(email);
-    cy.get('#signinPassword').type(password, { sensitive: true });
-
-    cy.contains('button', 'Login').click();
-
-    cy.contains('Garage').should('be.visible');
+    cy.contains('Garage', { timeout: 10000 })
+        .should('be.visible');
 });
-
 
 Cypress.Commands.overwrite('type', (originalFn, element, text, options = {}) => {
     if (options.sensitive) {
@@ -44,7 +49,7 @@ Cypress.Commands.overwrite('type', (originalFn, element, text, options = {}) => 
         Cypress.log({
             $el: element,
             name: 'type',
-            message: '*'.repeat(text.length)
+            message: '*'.repeat(String(text).length)
         });
     }
 
